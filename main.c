@@ -46,21 +46,37 @@ int main(){
   uint16_t nibble01 = opcode >> 12;
 
   switch (nibble01) {
+
     case 0x0:
       if (opcode == 0x00E0) { // 00E0 CLEAR
         printf("Instrução de limpar a tela"); //TODO futuramente
 
       }
       break;
+
     case 0x1:
       cpu.PC = opcode & 0x0FFF; //
       break;
-    case 0x6:
 
+    case 0x6:
       uint8_t x = (opcode >> 8) & 0x000F;
       uint8_t nn = opcode & 0x00FF;
 
       cpu.reg[x] = nn;
+      break;
+
+    case 0x7:
+      uint8_t a = (opcode >> 8) & 0x000F;
+      uint8_t b = opcode & 0x00FF;
+
+      cpu.reg[a] += b;
+      break;
+
+    case 0xA:
+      cpu.I = opcode & 0x0FFF;
+
+      break;
+
   }
   return 0;
 }
