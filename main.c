@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <string.h>
-
+#include <inttypes.h>
 typedef struct{
   uint8_t memory[4096];
   uint8_t reg[16];
@@ -45,6 +45,8 @@ int main(){
 
   uint16_t nibble01 = opcode >> 12;
 
+  printf("Método 3 (Hex): 0x%" PRIX8 "\n", opcode);
+
   switch (nibble01) {
 
     case 0x0:
@@ -77,6 +79,39 @@ int main(){
 
       break;
 
+    case 0x3:
+      uint8_t tx = (opcode >> 8) & 0x000F;
+      uint8_t tnn = opcode & 0x00FF;
+
+      if(cpu.reg[tx] == tnn){
+        cpu.PC += 2;
+      }
+
+    break;
+
+    case 0x4:
+      uint8_t ux = (opcode >> 8) & 0x000F;
+      uint8_t unn = opcode & 0x00FF;
+      if(cpu.reg[ux] != unn){
+        cpu.PC += 2;
+      }
+
+    break;
+
+    case 0x8:
+    
+      uint8_t xx = (opcode >> 8) & 0x000F;
+      uint8_t yy = (opcode >> 4) & 0x000F;
+      uint8_t op = opcode & 0x000F;
+
+      if(op == 0x0){
+        cpu.reg[xx] = cpu.reg[yy];
+        
+      }else if(op == 0x2){
+        cpu.reg[xx] = cpu.reg[xx] & cpu.reg[yy];
+      }
+
+    break;
   }
   return 0;
 }
