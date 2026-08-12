@@ -1,4 +1,5 @@
 #include <SDL2/SDL_events.h>
+#include <SDL2/SDL_keycode.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include "SDL2/SDL_video.h"
@@ -30,6 +31,15 @@ typedef struct{
   bool screen [32][64];
 
 }Chip8;
+
+SDL_KeyCode keyMap[16] ={
+
+  SDLK_x, SDLK_1, SDLK_2, SDLK_3,
+  SDLK_q, SDLK_w, SDLK_e, SDLK_a,
+  SDLK_s, SDLK_d, SDLK_z, SDLK_c,
+  SDLK_4, SDLK_r, SDLK_f, SDLK_v
+
+};
 
 void init(Chip8* cpu){
 
@@ -196,11 +206,17 @@ int main(){
         runnig = true;
       }
 
-      if(e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_x){
-        cpu.keyboard[0] = true;
-      }else if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_x){
-        cpu.keyboard[0] = false;
+      for (int i=0; i<16; i++) {
+        if (e.type == SDL_KEYDOWN && e.key.keysym.sym == keyMap[i]) {
+          cpu.keyboard[i] = true;
+        }
       }
+      for(int i=0; i<16; i++){
+        if(e.type == SDL_KEYUP && e.key.keysym.sym == keyMap[i]){
+          cpu.keyboard[i] = false;
+        }
+      }
+
     }
 
 
