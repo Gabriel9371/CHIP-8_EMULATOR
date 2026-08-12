@@ -1,3 +1,4 @@
+#include <SDL2/SDL_events.h>
 #include <SDL2/SDL_rect.h>
 #include <SDL2/SDL_render.h>
 #include "SDL2/SDL_video.h"
@@ -51,7 +52,7 @@ int main(){
   );
  SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-  FILE* f = fopen("draw_test.ch8", "rb");
+  FILE* f = fopen("keyboard_test2.ch8", "rb");
  if(f == NULL){
    printf("Erro: erro ao iniciar a rom");
   return 1;
@@ -64,8 +65,8 @@ int main(){
   //TEST 
   //TEMPORARY LOOP 
   bool runnig = false;
+  SDL_Event e;
   while(!runnig){
-
     uint16_t opcode = cpu.memory[cpu.PC] << 8 | cpu.memory[cpu.PC + 1];
     cpu.PC += 2;
 
@@ -178,7 +179,31 @@ int main(){
 
       break;
 
+      case 0xE:
+
+        uint8_t exx = (opcode >> 8) & 0x000F;
+        uint8_t val = cpu.reg[exx];
+        if (cpu.keyboard[val] == true) {
+          cpu.PC += 2;
+        }
+
+
+      break;
+
     }
+    while (SDL_PollEvent(&e)) {
+      if(e.type == SDL_QUIT){
+        runnig = true;
+      }
+
+      if(e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_x){
+        cpu.keyboard[0] = true;
+      }else if(e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_x){
+        cpu.keyboard[0] = false;
+      }
+    }
+
+
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
     SDL_RenderClear(renderer);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -196,7 +221,6 @@ int main(){
 
     printf("PC: 0x%04X | Opcode: 0x%04X | V0: %d | I: 0x%04X\n", cpu.PC, opcode, cpu.reg[0], cpu.I);
     if(opcode == 0x0000){
-      SDL_Delay(5000);
       runnig = true;
 
     }
