@@ -62,7 +62,7 @@ int main(){
   );
  SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-  FILE* f = fopen("keyboard_test2.ch8", "rb");
+  FILE* f = fopen("ibm_logo.ch8", "rb");
  if(f == NULL){
    printf("Erro: erro ao iniciar a rom");
   return 1;
@@ -192,12 +192,25 @@ int main(){
       case 0xE:
 
         uint8_t exx = (opcode >> 8) & 0x000F;
+        uint8_t enn = opcode & 0x00FF;
         uint8_t val = cpu.reg[exx];
-        if (cpu.keyboard[val] == true) {
-          cpu.PC += 2;
+        if(exx == 0xE){
+          if (cpu.keyboard[val] == true) {
+            cpu.PC += 2;
+          }
+
         }
 
+        if (cpu.keyboard[val] == true) {
+          cpu.PC += 2;
 
+        }else if(exx == enn){
+          
+          if(cpu.keyboard[val] == false){
+            cpu.PC += 2;
+          }
+          
+        }
       break;
 
     }
