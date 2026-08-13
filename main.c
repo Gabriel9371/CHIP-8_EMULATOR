@@ -194,21 +194,15 @@ int main(){
         uint8_t exx = (opcode >> 8) & 0x000F;
         uint8_t enn = opcode & 0x00FF;
         uint8_t val = cpu.reg[exx];
-        if(exx == 0xE){
+        if(enn == 0x9E){
           if (cpu.keyboard[val] == true) {
             cpu.PC += 2;
           }
-
-        }
-
-        if (cpu.keyboard[val] == true) {
-          cpu.PC += 2;
-
-        }else if(exx == enn){
+        }else if(enn == 0xA1){
           
-          if(cpu.keyboard[val] == false){
-            cpu.PC += 2;
-          }
+            if(cpu.keyboard[val] == false){
+              cpu.PC += 2;
+            }
           
         }
       break;
